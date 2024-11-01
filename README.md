@@ -1,8 +1,8 @@
 Implementert
-*steinsakspapir
-*dictionary
-*titleart
-*splashcreen
+* steinsakspapir
+* dictionary
+* titleart
+* splashcreen
 
 brukes for SSP oppgave
 
