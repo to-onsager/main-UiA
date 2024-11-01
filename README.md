@@ -1,6 +1,12 @@
-current limitations:
+Implementert
+*steinsakspapir
+*dictionary
+*titleart
+*splashcreen
 
-Uhhh. a few bugs, just a few.. needs functionality 
+brukes for SSP oppgave
 
+limitasjoner:
+- foreløpig ingen språkbytte funksjon
+- muligens noe strukturproblemer
 
-split modules for dictionary and game code
