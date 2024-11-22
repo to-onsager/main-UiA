@@ -1,24 +1,62 @@
 //#region 
 import * as readlinePromises from 'node:readline/promises';
-import fs from "node:fs"
+import fs, { stat } from "node:fs"
 const rl = readlinePromises.createInterface({ input: process.stdin, output: process.stdout });
 //#endregion
 
 import { HANGMAN_UI } from './graphics.mjs';
-import { GREEN, RED, WHITE, RESET } from './colors.mjs';
+import { GREEN, RED, WHITE, YELLOW, RESET } from './colors.mjs';
 import dictionary from './dictionary.mjs';
+import { SPLASH } from './splashscreen.js';
+import { start } from 'node:repl';
+
+console.clear();
+
+async function splashScreen() {
+    print(SPLASH, YELLOW)
+    return new Promise((resolve) => setTimeout(resolve, 3000));
+
+}
+
+await splashScreen(); 
+
+console.clear();
+
+async function askToStart() {
+    let startChoice = null;
+
+    while (startChoice !== 'y' && startChoice !== 'n') {
+        console.log("Vil du spille Hangman? (y/n)"); 
+        startChoice = (await (rl.question(""))).toLowerCase();
+        
+        if (startChoice == 'y') {
+            await startGame();
+        } else if (startChoice == 'n') {
+            console.log("Ok, Farvel.");
+            process.exit();
+        } else {
+            console.log("Skriv (y) for ja eller (n) for å avslutte");
+            console.clear();
+            
+            
+        }
+    }
+}
+
+
 
 const word = getRandomWord();
 let guessedWord = createGuessList(word.length);
 let wrongGuesses = [];
 let isGameOver = false;
 
+async function startGame() { 
 do {
 
     updateUI();
 
     // Gjette en bokstav || ord.  (|| betyr eller).
-    let guess = (await rl.question(dictionary.guessPrompt)).toLowerCase();
+    let guess = (await rl.question(dictionary.guessPrompt)).toLowerCase(); 
 
     if (isWordGuessed(word, guess)) {
         print(dictionary.winCelibration, GREEN);
@@ -44,10 +82,15 @@ do {
     }
 
     // Har du lyst å spille igjen?
+   
 
-} while (isGameOver == false)
+} while (isGameOver == false);
+
 
 process.exit();
+
+}
+
 
 function uppdateGuessedWord(guess) {
     for (let i = 0; i < word.length; i++) {
@@ -98,3 +141,5 @@ function getRandomWord() {
     return words[index].toLowerCase();
 
 }
+
+await askToStart();
