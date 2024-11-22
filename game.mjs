@@ -26,17 +26,18 @@ async function askToStart() {
     let startChoice = null;
 
     while (startChoice !== 'y' && startChoice !== 'n') {
-        console.log("○◜▏Vil du spille Hangman? (y/n)"); 
+        console.log(dictionary.PlayGame); 
         startChoice = (await (rl.question(""))).toLowerCase();
         
         if (startChoice == 'y') {
             await startGame();
         } else if (startChoice == 'n') {
-            console.log("Ok, Farvel.");
+            console.log(dictionary.NoPlayGame);
             process.exit();
         } else {
-            console.log("Skriv (y) for ja eller (n) for å avslutte");
-            console.clear();
+            console.log(dictionary.wrongInput);
+            
+            
             
             
         }
@@ -49,6 +50,7 @@ const word = getRandomWord();
 let guessedWord = createGuessList(word.length);
 let wrongGuesses = [];
 let isGameOver = false;
+
 
 async function startGame() { 
 do {
@@ -67,16 +69,16 @@ do {
         uppdateGuessedWord(guess);
 
         if (isWordGuessed(word, guessedWord)) {
-            print("Hurra du gjettet ordet", GREEN);
+            print(dictionary.winCelibration, GREEN);
             isGameOver = true;
         }
     } else {
-        print(" DU TAR FEIL !!!!!!!", RED);
+        print(dictionary.youAreWrong, RED);
         wrongGuesses.push(guess);
 
-        if (wrongGuesses.length >= HANGMAN_UI.length - 1) {
+        if (wrongGuesses.length >= HANGMAN_UI.length - 0) {
             isGameOver = true;
-            print("Du har daua", RED);
+            print(dictionary.youDied, RED);
         }
 
     }
