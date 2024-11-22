@@ -26,7 +26,7 @@ async function askToStart() {
     let startChoice = null;
 
     while (startChoice !== 'y' && startChoice !== 'n') {
-        console.log("Vil du spille Hangman? (y/n)"); 
+        console.log("○◜▏Vil du spille Hangman? (y/n)"); 
         startChoice = (await (rl.question(""))).toLowerCase();
         
         if (startChoice == 'y') {
