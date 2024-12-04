@@ -5,3 +5,4 @@ function print(text, color = ANSI.COLOR.YELLOW) {
 };
 
 export default print
+
