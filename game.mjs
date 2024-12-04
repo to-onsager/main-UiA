@@ -1,100 +1,155 @@
-//#region 
-import * as readlinePromises from 'node:readline/promises';
-import fs from "node:fs"
-const rl = readlinePromises.createInterface({ input: process.stdin, output: process.stdout });
+//#region
+import * as readlinePromises from "node:readline/promises";
+const rl = readlinePromises.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 //#endregion
+/*
+let brett = [
+    [1, -1, 1],
+    [-1, -1, -1],
+    [1, 1, 0],
+];*/
 
-import { HANGMAN_UI } from './graphics.mjs';
-import { GREEN, RED, WHITE, RESET } from './colors.mjs';
-import dictionary from './dictionary.mjs';
+import ANSI from "./ANSI.mjs"
 
-const word = getRandomWord();
-let guessedWord = createGuessList(word.length);
-let wrongGuesses = [];
-let isGameOver = false;
+let brett = [
+    ╔═══╦═══╦═══╗,
+    ║ 0 ║ 0 ║ 0 ║,
+    ╠═══╬═══╬═══╣,
+    ║ 0 ║ 0 ║ 0 ║,
+    ╠═══╬═══╬═══╣,
+    ║ 0 ║ 0 ║ 0 ║,
+    ╚═══╩═══╩═══╝,
+];
 
-do {
+//#region Logikken for spillet tre på rad. --------------------------------------------------------
 
-    updateUI();
+const spiller1 = 1;
+const spiller2 = -1;
 
-    // Gjette en bokstav || ord.  (|| betyr eller).
-    let guess = (await rl.question(dictionary.guessPrompt)).toLowerCase();
+let resultatAvSpill = "";
+let spiller = spiller1;
+let isGameOver = false
 
-    if (isWordGuessed(word, guess)) {
-        print(dictionary.winCelibration, GREEN);
+while (isGameOver == false) {
+
+    console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
+    visBrett(brett);
+    console.log(`Det er spiller ${spillerNavn()} sin tur`)
+
+    let rad = -1;
+    let kolone = -1;
+
+    do {
+        let pos = await rl.question("Hvor setter du merket ditt? ");
+        [rad, kolone] = pos.split(",")
+        rad = rad - 1;
+        kolone = kolone - 1;
+    } while (brett[rad][kolone] != 0)
+
+    brett[rad][kolone] = spiller;
+
+    vinner = harNoenVunnet(brett);
+    if (vinner != 0) {
+        isGameOver = true;
+        resultatAvSpill = `Vinneren er ${spillerNavn(vinner)}`;
+    } else if (erSpilletUavgjort(brett)) {
+        resultatAvSpill = "Det ble uavgjort";
         isGameOver = true;
     }
-    else if (word.includes(guess)) {
 
-        uppdateGuessedWord(guess);
+    byttAktivSpiller();
+}
 
-        if (isWordGuessed(word, guessedWord)) {
-            print("Hurra du gjettet ordet", GREEN);
-            isGameOver = true;
-        }
-    } else {
-        print(" DU TAR FEIL !!!!!!!", RED);
-        wrongGuesses.push(guess);
-
-        if (wrongGuesses.length >= HANGMAN_UI.length - 1) {
-            isGameOver = true;
-            print("Du har daua", RED);
-        }
-
-    }
-
-    // Har du lyst å spille igjen?
-
-} while (isGameOver == false)
-
+console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
+visBrett(brett);
+console.log(resultatAvSpill);
+console.log("Game Over");
 process.exit();
 
-function uppdateGuessedWord(guess) {
-    for (let i = 0; i < word.length; i++) {
-        if (word[i] == guess) {
-            guessedWord[i] = guess;
-            // Banana og vi tipper a.
-            // _ -> a
+//#endregion---------------------------------------------------------------------------------------
+
+function harNoenVunnet(brett) {
+
+    for (let rad = 0; rad < brett.length; rad++) {
+        let sum = 0;
+        for (let kolone = 0; kolone < brett.length; kolone++) {
+            sum += brett[rad][kolone];
+        }
+
+        if (Math.abs(sum) == 3) {
+            return sum / 3;
         }
     }
-}
 
-function createGuessList(length) {
-    let output = [];
-    for (let i = 0; i < length; i++) {
-        output[i] = "_";
+    for (let kolone = 0; kolone < brett.length; kolone++) {
+        let sum = 0;
+        for (let rad = 0; rad < brett.length; rad++) {
+            sum += brett[rad][kolone];
+        }
+
+        if (Math.abs(sum) == 3) {
+            return sum / 3;
+        }
     }
-    return output;
+
+    return 0;
 }
 
-function isWordGuessed(correct, guess) {
-    for (let i = 0; i < correct.length; i++) {
-        if (correct[i] != guess[i]) {
-            return false;
+function erSpilletUavgjort(brett) {
+
+    // Dersom alle felter er fylt så er spillet over. 
+    for (let rad = 0; rad < brett.length; rad++) {
+        for (let kolone = 0; kolone < brett[rad].length; kolone++) {
+            if (brett[rad][kolone] == 0) { // Dersom vi finner 0 på rad,kolonne så er ikke brettet fylt.
+                return false;
+            }
         }
     }
 
     return true;
+
 }
 
-function print(msg, color = WHITE) {
-    console.log(color, msg, RESET);
+function visBrett(brett) {
+
+    let visningAvBrett = "";
+    for (let i = 0; i < brett.length; i++) {
+        const rad = brett[i];
+        let visningAvRad = "";
+        for (let j = 0; j < rad.length; j++) {
+            let verdi = rad[j];
+            if (verdi == 0) {
+                visningAvRad += "_ ";
+            } else if (verdi == spiller1) {
+                visningAvRad += ANSI.COLOR.GREEN + "X " + ANSI.COLOR_RESET;
+            } else {
+                visningAvRad += ANSI.COLOR.RED + "O " + ANSI.COLOR_RESET;
+            }
+        }
+        visningAvRad += "\n";
+        visningAvBrett += visningAvRad;
+    }
+
+    console.log(visningAvBrett);
+
 }
 
-function updateUI() {
-
-    console.clear();
-    print(guessedWord.join(""), GREEN);
-    print(HANGMAN_UI[wrongGuesses.length]);
-    if (wrongGuesses.length > 0) {
-        print(dictionary.wrongGuesses + RED + wrongGuesses.join() + RESET);
+function spillerNavn(sp = spiller) {
+    if (sp == spiller1) {
+        return "Spiller 1(X)";
+    } else {
+        return "Spiller 2(O)";
     }
 }
 
-function getRandomWord() {
-
-    const words = ["Kiwi", "Car", "Dog", "etwas"];
-    let index = Math.floor(Math.random() * words.length - 1);
-    return words[index].toLowerCase();
-
+function byttAktivSpiller() {
+    spiller = spiller * -1;
+    /* if (spiller == spiller1) {
+         spiller = spiller2
+     } else {
+         spiller = spiller1;
+     }*/
 }
