@@ -13,16 +13,10 @@ let brett = [
 ];*/
 
 import ANSI from "./ANSI.mjs"
+import brett from "./SPILLBRETT.mjs";
+import print from "./output.mjs";
 
-let brett = [
-    ╔═══╦═══╦═══╗,
-    ║ 0 ║ 0 ║ 0 ║,
-    ╠═══╬═══╬═══╣,
-    ║ 0 ║ 0 ║ 0 ║,
-    ╠═══╬═══╬═══╣,
-    ║ 0 ║ 0 ║ 0 ║,
-    ╚═══╩═══╩═══╝,
-];
+print(brett, ANSI.COLOR.YELLOW);
 
 //#region Logikken for spillet tre på rad. --------------------------------------------------------
 
@@ -35,9 +29,9 @@ let isGameOver = false
 
 while (isGameOver == false) {
 
-    console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
+    print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
     visBrett(brett);
-    console.log(`Det er spiller ${spillerNavn()} sin tur`)
+    print(`Det er spiller ${spillerNavn()} sin tur`)
 
     let rad = -1;
     let kolone = -1;
@@ -63,10 +57,10 @@ while (isGameOver == false) {
     byttAktivSpiller();
 }
 
-console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
+print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
 visBrett(brett);
-console.log(resultatAvSpill);
-console.log("Game Over");
+print(resultatAvSpill);
+print("Game Over");
 process.exit();
 
 //#endregion---------------------------------------------------------------------------------------
@@ -133,7 +127,7 @@ function visBrett(brett) {
         visningAvBrett += visningAvRad;
     }
 
-    console.log(visningAvBrett);
+    print(visningAvBrett);
 
 }
 
