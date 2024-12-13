@@ -23,3 +23,4 @@ attack: "attack"
 
 
 export default DICTIONARY
+
