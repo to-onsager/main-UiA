@@ -10,3 +10,4 @@ let SPLASH = `
 
 
 export { SPLASH }
+
