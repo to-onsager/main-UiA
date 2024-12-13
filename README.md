@@ -1,15 +1,8 @@
-Implementert
-* steinsakspapir
-* dictionary (uheldig overskrevet med hangman oppgaven, sjekk history for commit... ((oops :,( ))
-* titleart
-* splashcreen
 
-brukes for SSP oppgave
+Labyrinth spill:
+La till splashscreen modul, la til ekstra level med dør, og egen dictionary for det jeg klarte av hardkodet tekst uten å miste funksjonalitet
 
-limitasjoner:
-- foreløpig ingen språkbytte funksjon
-- muligens noe strukturproblemer
-
+Kjør på nytt bare hvis den tilfeldigvis svikter pga "random" funksjon, skal fungere. 
 
 
 
